@@ -41,7 +41,6 @@
 //  - Conditionals for less than 8 characters, returns, "Please select between 8-128 characters."
 //  - Conditional for greater than 128 characters, returns, "Please select between 8-128 characters."
 
-// Takes all possible options from each array (lowercase, upper, numbers, symbols) and makes a new array of "possibilities" then picks X amount of characters based on user input, but need to make sure its picking the same amount from each array or no more than the input divided by however many arrays are being used, and then randomize their order
 
 // Assignment Code
 var generateBtn = document.querySelector("#generate");
@@ -51,154 +50,92 @@ const specialCharacters = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "<"
 const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 // Write password to the #password input
-function writePassword() {
-  var password = generatePassword();
+function writePassword(password) {
   var passwordText = document.querySelector("#password");
-
-  passwordText.value = securePassword;
+  passwordText.value = password;
 
 }
 
 // Add event listener to generate button
-generateBtn.addEventListener("click", start, writePassword);
+generateBtn.addEventListener("click", start);
 
 function start () {
-  const lowerCaseBoolean = confirm(`Do you want to use lowercase characters?`); // true or false
-  const upperCaseBoolean = confirm(`Do you want to use uppercase characters?`); // true or false
-  const numberBoolean = confirm(`Do you want to use numbers?`); // true or false
-  const specialCharactersBoolean = confirm(`Do you want to use special characters?`); //true or false
-  const numPasswordLength = prompt(`Please pick a value between 8 and 128 characters`); // input for password length
+  let numPasswordLength = prompt(`Please pick a value between 8 and 128 characters`); // input for password length
 
-  var passwordPossibilities = [" "];
-
-if (lowerCaseBoolean === true && upperCaseBoolean === true && numberBoolean === true && specialCharactersBoolean === true) {
-  var passwordPossibilities = lowerCase.concat(upperCase, numbers, specialCharacters);
-  } else if (lowerCaseBoolean === true && upperCaseBoolean === true && numberBoolean === true) {
-      var passwordPossibilities = lowerCase.concat(upperCase, numbers);
-    } else if (lowerCaseBoolean === true && upperCaseBoolean === true && specialCharactersBoolean === true) {
-      var passwordPossibilities = lowerCase.concat(upperCase, specialCharacters);
-    } else if (specialCharactersBoolean === true && upperCaseBoolean === true && numberBoolean === true) {
-      var passwordPossibilities = specialCharacters.concat(upperCase, numbers);
-    } else if (lowerCaseBoolean === true && specialCharactersBoolean === true && numberBoolean === true) {
-      var passwordPossibilities = lowerCase.concat(specialCharacters, numbers);
-      } else if (lowerCaseBoolean === true && upperCaseBoolean === true) {
-        var passwordPossibilities = lowerCase.concat(upperCase);
-      } else if (lowerCaseBoolean === true && specialCharactersBoolean === true) {
-          var passwordPossibilities = lowerCase.concat(specialCharacters);
-      } else if (lowerCaseBoolean === true && numberBoolean === true) {
-        var passwordPossibilities = lowerCase.concat(numbers);
-      } else if (specialCharactersBoolean === true && upperCaseBoolean === true) {
-        var passwordPossibilities = specialCharacters.concat(upperCase);
-      } else if (specialCharactersBoolean === true && numberBoolean === true) {
-        var passwordPossibilities = specialCharacters.concat(numbers);
-      } else if (upperCaseBoolean === true && numberBoolean === true) {
-        var passwordPossibilities = upperCase.concat(numbers);
-      } else if (lowerCaseBoolean === true) {
-        var passwordPossibilities = lowerCase.concat();
-      } else if (upperCaseBoolean === true) {
-        var passwordPossibilities = upperCase.concat();
-      } else if (numberBoolean === true) {
-        var passwordPossibilities = numbers.concat();
-      } else if (specialCharactersBoolean === true) {
-        var passwordPossibilities = specialCharacters.concat();
+  // if user presses cancel, it will exit the function
+  if (!numPasswordLength) {
+    return;
   }
 
-  for (let index = 0; index < numPasswordLength; index++) {
+  // alert if password is too short or too long
+  if (numPasswordLength < 8 || numPasswordLength > 128) {
+    window.alert(`Please choose a length of at least 8 characters and no more than 128 characters.`);
+    return;
+  }
+
+  let lowerCaseBoolean = confirm(`Do you want to use lowercase characters?`); // true or false
+  let upperCaseBoolean = confirm(`Do you want to use uppercase characters?`); // true or false
+  let numberBoolean = confirm(`Do you want to use numbers?`); // true or false
+  let specialCharactersBoolean = confirm(`Do you want to use special characters?`); //true or false
+
+  // Alert if no input types selected
+
+  if (lowerCaseBoolean === false && upperCaseBoolean === false && numberBoolean === false && specialCharactersBoolean === false) {
+    window.alert(`You must choose at least one input to proceed.`);
+    return;
+  }
+
+  // Empty array to store password possibilities based on conditions
+  var passwordPossibilities = [];
+
+  // Joining user inputs into one, new array
+  if (lowerCaseBoolean) {
+  passwordPossibilities = lowerCase.concat(passwordPossibilities);
+  } if (upperCaseBoolean) {
+  passwordPossibilities = upperCase.concat(passwordPossibilities);
+  } if (numberBoolean) {
+  passwordPossibilities = numbers.concat(passwordPossibilities);
+  } if (specialCharactersBoolean) {
+  passwordPossibilities = specialCharacters.concat(passwordPossibilities);
+  }
+
+  // New variable for password to become
+  let newPassword = "";
+  // Using count variable in the conditionals below and the for loop, to ensure that at least 1 character of each input will be included in password if selected
+  let count = 0;
+
+  // randomizing each user input array/conditional and producing a newPassword variable and increasing count if user selects input 
+  if (lowerCaseBoolean) {
+    const passwordChar = lowerCase[Math.floor(Math.random() * lowerCase.length)];
+    newPassword = newPassword.concat(passwordChar);
+    count++;
+  }
+  if (upperCaseBoolean) {
+    const passwordChar = upperCase[Math.floor(Math.random() * upperCase.length)];
+    newPassword = newPassword.concat(passwordChar);
+    count++;
+  }
+  if (specialCharactersBoolean) {
+    const passwordChar = specialCharacters[Math.floor(Math.random() * specialCharacters.length)];
+    newPassword = newPassword.concat(passwordChar);
+    count++;
+  }
+  if (numberBoolean) {
+    const passwordChar = numbers[Math.floor(Math.random() * numbers.length)];
+    newPassword = newPassword.concat(passwordChar);
+    count++;
+  }
+
+  // Looping through the password possibilities based on the password length that the user selects, then defining the password variable
+  for (let index = count; index < numPasswordLength; index++) {
     const passwordChar = passwordPossibilities[Math.floor(Math.random() * passwordPossibilities.length)];
-    console.log(passwordChar);
+    newPassword = newPassword.concat(passwordChar);
   }
+
+  // Shuffles through the password variable to ensure string is randomized and varied 
+  newPassword = newPassword.split('').sort(function(){return 0.5-Math.random()}).join('');
+
+  // logs in console and writes the generated password onto the page
+  console.log(newPassword);
+  writePassword(newPassword);
 };
-
-// figure out how to require at least one character of each condition within the password
-// look into cleaning up and making it easier than all of the else, if statements above
-// then figure out how to have the password input into the text box
-// if characters are less than 8 or greater than 128, then need to alert user
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// if (upperCaseBoolean === true) {
-//   var passwordPossibilities = upperCase.concat();
-//   console.log(passwordPossibilities);
-//   }
-
-// if (numberBoolean === true) {
-//   var passwordPossibilities = numbers.concat();
-//   console.log(passwordPossibilities);
-//   }
-
-// if (specialCharactersBoolean === true) {
-//   var passwordPossibilities = specialCharacters.concat();
-//   console.log(passwordPossibilities);
-//   }
-// };
-
-
-// if (lowerCaseBoolean === true) {
-//   for (let index = 0; index < numPasswordLength; index++) {
-//     const lowerCaseGen = lowerCase[Math.floor(Math.random() * lowerCase.length)];
-//     console.log(lowerCaseGen);
-//   }
-// };
-
-// if (upperCaseBoolean === true) {
-//   for (let index = 0; index < numPasswordLength; index++) {
-//     const upperCaseGen = upperCase[Math.floor(Math.random() * upperCase.length)];
-//     console.log(upperCaseGen);
-//   }
-// };
-
-// if (numberBoolean === true) {
-//   for (let index = 0; index < numPasswordLength; index++) {
-//     const numberGen = numbers[Math.floor(Math.random() * numbers.length)];
-//     console.log(numberGen);
-//   }
-// };
-
-// if (specialCharactersBoolean === true) {
-//   for (let index = 0; index < numPasswordLength; index++) {
-//     const specialCharactersGen = specialCharacters[Math.floor(Math.random() * specialCharacters.length)];
-//     console.log(specialCharactersGen);
-//   }
-// };
-
-// if (lowerCaseBoolean === true) {
-//   const passwordPossibilities = lowerCase.concat();
-//   console.log(passwordPossibilities);
-// } else if (upperCaseBoolean === true) {
-//   const passwordPossibilities = upperCase.concat();
-//     console.log(passwordPossibilities);
-//   } else if (numberBoolean === true) {
-//     const passwordPossibilities = numbers.concat();
-//     console.log(passwordPossibilities);
-//   } else if (specialCharactersBoolean === true) {
-//     const passwordPossibilities = specialCharacters.concat();
-//     console.log(passwordPossibilities);
